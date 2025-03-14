@@ -1,21 +1,36 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Categories from '@/components/customComponents/mainComponents/Categories'
 import HomeHeader from '@/components/customComponents/mainComponents/HomeHeader'
 import HomeCards from '@/components/customComponents/mainComponents/HomeCards'
 import Products from '@/components/customComponents/mainComponents/Products'
+import { usePageContext } from '@/context/pageContext'
+import { ICategoryWithSubCategoryResponse } from '@/interfaces/modelInterface'
 
 function Index() {
+  const {products,category_subCategory} = usePageContext();
+  const  [filterTopCategories,setFilterTopCategories] = useState<ICategoryWithSubCategoryResponse['sub_categories']|null>(null);
+  useEffect(() =>{
+    if(filterTopCategories ===  null && category_subCategory)
+    {
+      category_subCategory.forEach((data) =>  {
+        setFilterTopCategories((prev) =>  [
+          ...(prev  || []),
+          ...(data.sub_categories.slice(0,4))
+        ]);
+      })
+    }
+  },[filterTopCategories,category_subCategory]);
   return (
     <>
     <HomeHeader />
     <br />
     <Categories  />
     <br /><br />
-    <HomeCards title='top categories' />
+    {filterTopCategories && <HomeCards title='top categories' data={filterTopCategories.slice(0,4)} />}
     <br /><br />
-    <HomeCards title='top picks' />
+    {filterTopCategories && <HomeCards title='top picks' data={filterTopCategories.slice(5,9)} />}
     <br /><br />
-    <Products title='Explore' />
+    {products && <Products title='Explore' productsData={products} />}
     </>
   )
 }

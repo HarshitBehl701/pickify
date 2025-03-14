@@ -1,9 +1,18 @@
 import React from "react";
 
-const List = ({children,heading,listTitle}:{children:React.ReactNode,heading:string[],listTitle:string}) => {
+const List = ({children,heading,listTitle,search,setSearch}:{children:React.ReactNode,heading:string[],listTitle:string,search:string,setSearch:React.Dispatch<React.SetStateAction<string>>}) => {
   return (
     <div className="bg-white">
+      <div className="header flex items-center justify-between flex-wrap">
       <h2 className="text-2xl font-bold text-gray-800 mb-4 capitalize">{listTitle}</h2>
+      <input
+        type="text"
+        placeholder="Search..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="p-2 border rounded-full mb-4 w-72 px-6"
+      />
+      </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200">
