@@ -3,7 +3,7 @@ import path from "path";
 import fs from "fs";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
 import dbConnection from "@/config/db";
-import { IAdmin, ISubCategory } from "@/migrations/Migration";
+import { ISubCategory } from "@/migrations/Migration";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import multer from "multer";
 import { RowDataPacket } from "mysql2";
@@ -44,11 +44,11 @@ async function processFile(req: NextRequest): Promise<{ id: number; filePath: st
 
 export async function POST(req: NextRequest) {
     try {
-        const authResult = await authMiddleware(req) as { success: boolean, admin: IAdmin };
-        if (!authResult.success) {
-            return NextResponse.json(responseStructure(false, "Unauthorized"), { status: 401 });
+        const authResult = await authMiddleware(req);
+        if (authResult.status !== 200) {
+            return authResult;
         }
-
+        
         const fileData = await processFile(req);
         if (!fileData) {
             return NextResponse.json(responseStructure(false, "Invalid form data"), { status: 400 });

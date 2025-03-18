@@ -3,17 +3,21 @@ import EditUserProfile from "@/components/customComponents/EditUserProfile";
 import { IUser } from "@/migrations/Migration";
 import axios from "axios";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
-function UserDetail() {
-  const searchParams = useSearchParams();
+function UserDetail({ searchParams }: { searchParams: Promise<{ user_id?: string }> }) {
   const [userData, setUserData] = useState<IUser | null>(null);
-  const user_id = searchParams.get('user_id');
+  const [user_id,setUserId] = useState<string  |  null>(null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() =>  {
+    ;(async() => {
+      setUserId((await  searchParams)?.user_id  as  string)
+    })()
+  },[searchParams])
   
   useEffect(() => {
     if (userData == null && user_id) {

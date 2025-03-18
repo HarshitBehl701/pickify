@@ -5,10 +5,9 @@ import { deleteCookie } from "cookies-next";
 
 export async function POST(req: NextRequest) {
     try {
-        const authResult = await authMiddleware(req) as { success: boolean };
-
-        if (!authResult.success) {
-            return NextResponse.json(responseStructure(false, "Unauthorized"), { status: 401 });
+        const authResult = await authMiddleware(req);
+        if (authResult.status !== 200) {
+            return authResult;
         }
 
         const response = NextResponse.json(responseStructure(true, "Successfully logged out"));

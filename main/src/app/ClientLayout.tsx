@@ -1,5 +1,6 @@
 "use client";
-import MainLayout from "@/components/layout/mainLayout/MainLayout";
+import Footer from "@/components/customComponents/mainComponents/Footer";
+import Navbar from "@/components/customComponents/mainComponents/Navbar";
 import { PageContextProvider } from "@/context/pageContext";
 import { UserContextProvider } from "@/context/userContext";
 import {
@@ -149,7 +150,13 @@ function ClientLayout({ children }: { children: React.ReactNode }) {
         userOrders={userOrders}
         setUserOrders={setUserOrders}
       >
-        <MainLayout>{children}</MainLayout>
+        <div>
+          <Navbar />
+          <div className="main w-[95%] mx-auto py-10 min-h-[90dvh] w-container">
+            {children}
+          </div>
+          <Footer />
+        </div>
       </UserContextProvider>
     </PageContextProvider>
   );

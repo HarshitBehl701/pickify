@@ -1,7 +1,6 @@
 "use client"
 import { IOrder } from "@/migrations/Migration";
 import axios from "axios";
-import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -20,10 +19,16 @@ const  orderStatuses:Record<IOrderStatus,IOrderStatus> = {
 
 }
 
-const OrderDetails = () => {
+const OrderDetails = ({ searchParams }: { searchParams: Promise<{ order_id?: string }> }) => {
   const [formattedDate, setFormattedDate] = useState("");
-  const searchParams =  useSearchParams();
-  const  order_id = searchParams.get('order_id');
+  const  [order_id,setOrderId]  = useState<string  |null>(null);
+  useEffect(() => {
+    ;(async()  => {
+      const  search = await searchParams;
+      setOrderId(search?.order_id  as   string);
+    })()
+  },[searchParams])
+
   const [orderData,setOrderData] = useState<IOrder  | null>(null);
   useEffect(() => {
     // Format date in client side to avoid hydration issues

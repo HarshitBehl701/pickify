@@ -6,10 +6,9 @@ import { authMiddleware } from "@/middlewares/authMiddleware";
 
 export async function POST(req: NextRequest) {
     try {
-        // Authenticate the user using authMiddleware
-        const authResult = await authMiddleware(req) as  {success:boolean,admin:IAdmin};
-        if (!authResult.success) {
-            return authResult; // `authMiddleware` returns a `NextResponse` if authentication fails
+        const authResult = await authMiddleware(req);
+        if (authResult.status !== 200) {
+            return authResult;
         }
 
         const mysqlDb = await dbConnection;

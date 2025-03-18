@@ -5,7 +5,7 @@ import { IAdmin } from "@/migrations/Migration";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
 
 // Middleware function for admin authentication
-export async function authMiddleware(req: NextRequest) {
+export async function authMiddleware(req: NextRequest): Promise<NextResponse> {
   try {
     const token = req.cookies.get("adminAuthToken")?.value;
 
@@ -30,8 +30,9 @@ export async function authMiddleware(req: NextRequest) {
 
     const admin = (rows as IAdmin[])[0];
 
-    // Return authenticated admin object
-    return { success: true, admin };
+    // Return authenticated admin object as NextResponse
+    return NextResponse.json(responseStructure(true, "Authenticated", { admin }), { status: 200 });
+
   } catch (error) {
     return NextResponse.json(responseStructure(false, handleCatchErrors(error)), { status: 401 });
   }

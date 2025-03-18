@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import dbConnection from "@/config/db";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
-import { IAdmin, IUser } from "@/migrations/Migration";
+import { IUser } from "@/migrations/Migration";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 
 export async function POST(req: NextRequest) {
     try {
-        const authResult = await authMiddleware(req) as { success: boolean; admin: IAdmin };
-        if (!authResult.success) {
-            return NextResponse.json(responseStructure(false, "Unauthorized"), { status: 401 });
+        const authResult = await authMiddleware(req);
+        if (authResult.status !== 200) {
+            return authResult;
         }
 
         const mysqlDb = await dbConnection;

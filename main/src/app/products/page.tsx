@@ -2,17 +2,25 @@
 import Products from '@/components/customComponents/mainComponents/Products';
 import { usePageContext } from '@/context/pageContext';
 import { IProduct } from '@/interfaces/modelInterface';
-import { useSearchParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
-function ProductSearch() {
-    const searchParams = useSearchParams();
-    const q = searchParams.get('q');
-    const category = searchParams.get('category');
-    const sub_category = searchParams.get('sub_category');
+function ProductSearch({ searchParams }: { searchParams: Promise<{ q: string,category:string,sub_category:string }> }) {
     const { products } = usePageContext();
     const [filteredProducts, setFilteredProducts] = useState<IProduct[] | null>(null);
     const [filteredSimilarProducts, setFilteredSimilarProducts] = useState<IProduct[] | null>(null);
+    const  [q,setQ] = useState<string | null>(null)
+    const  [category,setCategory] = useState<string | null>(null)
+    const  [sub_category,setSubCategory] = useState<string | null>(null)
+    
+    useEffect(() =>  {
+        ;(async()  => {
+            const search = await searchParams;
+            setQ(search?.q)
+            setCategory(search?.category)
+            setSubCategory(search?.sub_category)
+        })()
+    },[searchParams])
+
     useEffect(() => {
         if (!products || products.length === 0) return;
 

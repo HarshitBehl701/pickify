@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
 import { IProduct } from "@/interfaces/modelInterface";
 import { toast, Toaster } from "sonner";
 import axios from "axios";
@@ -11,7 +10,7 @@ import { useUserContext } from "@/context/userContext";
 import Comments from "@/components/customComponents/mainComponents/Comments";
 import { Star } from "lucide-react";
 
-function ProductDetail() {
+function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: string }> }) {
   const [quantity, setQuantity] = useState(1);
   const [productData, setProductData] = useState<IProduct | null>(null);
   const [similarProducts, setSimilarProducts] = useState<IProduct[] | null>(
@@ -19,12 +18,18 @@ function ProductDetail() {
   );
   const [otherProducts, setOtherProducts] = useState<IProduct[] | null>(null);
   const { products } = usePageContext();
-  const searchParams = useSearchParams();
-  const product_id = searchParams.get("product_id");
   const [whislistId, setWhislistId] = useState<number | null>(null);
   const [selectedImage, setSelectedImage] = useState<string>(
     "/assets/mainAssets/logos/logo.png"
   );
+  const [product_id,setProductId] =  useState<string | null>(null)
+
+  useEffect(() =>{
+    ;(async() =>{
+      const search = await  searchParams;
+      setProductId(search?.product_id as  string)
+    })()
+  },[searchParams])
 
   useEffect(() => {
     if (productData && "id" in productData) {

@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnection from "@/config/db";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
 import { authMiddleware } from "@/middlewares/authMiddleware";
-import { IAdmin, ICategory, ICategoryWithSubCategoryQueries, ICategoryWithSubCategoryResponse } from "@/migrations/Migration";
+import { ICategory, ICategoryWithSubCategoryQueries, ICategoryWithSubCategoryResponse } from "@/migrations/Migration";
 
 export async function POST(req: NextRequest) {
     try {
-        const authResult = await authMiddleware(req) as { success: boolean, admin: IAdmin };
-        if (!authResult.success) {
-            return NextResponse.json(responseStructure(false, "Unauthorized"), { status: 401 });
+        const authResult = await authMiddleware(req);
+        if (authResult.status !== 200) {
+            return authResult;
         }
 
         const mysqlDb = await dbConnection;
@@ -55,12 +55,12 @@ export async function POST(req: NextRequest) {
             if (row.sub_category_id) {
                 categoryMap.get(categoryId)!.sub_categories.push({
                     id: row.sub_category_id,
-                    category_id: row.sub_category_category_id  as  ICategory,
+                    category_id: row.sub_category_category_id as ICategory,
                     name: row.sub_category_name as string,
                     image: row.sub_category_image,
-                    is_active: row.sub_category_is_active as  0  | 1,
-                    created_at: new Date(row.sub_category_created_at as  Date),
-                    updated_at: new Date(row.sub_category_updated_at  as  Date),
+                    is_active: row.sub_category_is_active as 0 | 1,
+                    created_at: new Date(row.sub_category_created_at as Date),
+                    updated_at: new Date(row.sub_category_updated_at as Date),
                 });
             }
         });

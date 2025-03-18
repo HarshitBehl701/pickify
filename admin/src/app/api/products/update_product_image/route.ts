@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
 import dbConnection from "@/config/db";
-import { IAdmin, IProduct } from "@/migrations/Migration";
+import { IProduct } from "@/migrations/Migration";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 
 const uploadDir = path.join(process.cwd(), "public/assets/productAssets");
@@ -27,9 +27,9 @@ const upload = multer({ storage });
 
 export async function POST(req: NextRequest) {
     try {
-        const authResult = await authMiddleware(req) as { success: boolean; admin: IAdmin };
-        if (!authResult.success) {
-            return NextResponse.json(responseStructure(false, "Unauthorized"), { status: 401 });
+        const authResult = await authMiddleware(req);
+        if (authResult.status !== 200) {
+            return authResult;
         }
 
         const formData = await req.formData();

@@ -11,12 +11,10 @@ const schema = z.object({
 
 export async function POST(req: NextRequest) {
     try {
-        // Authenticate user using authMiddleware
-        const authResult = await authMiddleware(req) as {success:boolean,admin:IAdmin};
-        if (!authResult.success) {
-            return authResult; // `authMiddleware` already returns a `NextResponse`
+        const authResult = await authMiddleware(req);
+        if (authResult.status !== 200) {
+            return authResult;
         }
-
         // Parse request body
         const body = await req.json();
         const parseResult = schema.safeParse(body);
