@@ -11,7 +11,9 @@ function ProductSearch({ searchParams }: { searchParams: Promise<{ q: string,cat
     const  [q,setQ] = useState<string | null>(null)
     const  [category,setCategory] = useState<string | null>(null)
     const  [sub_category,setSubCategory] = useState<string | null>(null)
-    
+
+    console.log(q,category,sub_category)
+
     useEffect(() =>  {
         ;(async()  => {
             const search = await searchParams;
