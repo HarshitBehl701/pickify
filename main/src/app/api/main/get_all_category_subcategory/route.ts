@@ -24,7 +24,7 @@ export async function POST() {
             FROM \`categories\` category
             LEFT JOIN \`sub_categories\` sub_category 
             ON category.id = sub_category.category_id  
-            WHERE category.is_active = 1
+            WHERE category.is_active = 1 AND sub_category.is_active=1
         `) as RowDataPacket[];
 
         if (rows.length === 0) {
