@@ -65,7 +65,7 @@ function UpdateCategoryImage({
           onClick={handleImageClick}
         >
           <Image
-            src={previews || `/assets/mainAssets/main/${category.image}`}
+            src={previews || `${process.env.NEXT_PUBLIC_API_CATEGORIES_ASSETS_URL}/${category.image}`}
             width={120}
             height={100}
             alt="Category Image"

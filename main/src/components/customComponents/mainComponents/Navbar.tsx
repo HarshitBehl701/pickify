@@ -42,7 +42,7 @@ export default function Navbar() {
         {/* Logo */}
         <div className="text-2xl font-bold">
           <Image
-            src={"/assets/mainAssets/logos/logoRBG3.png"}
+            src={`${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_RBG_NAME}`}
             width={120}
             height={50}
             alt="Pickify"

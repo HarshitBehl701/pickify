@@ -80,7 +80,7 @@ function UserDetail({ searchParams }: { searchParams: Promise<{ user_id?: string
               onClick={handleImageClick}
             >
               <Image
-                src={preview || (userData && userData.image ? `${process.env.NEXT_PUBLIC_USER_API_ASSETS_URL}/${userData.image}` : "/assets/mainAssets/logos/logo.png")}
+                src={preview || (userData && userData.image ? `${process.env.NEXT_PUBLIC_API_USERS_ASSETS_URL}/${userData.image}` : `${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_NAME}`)}
                 width={140}
                 height={100}
                 unoptimized

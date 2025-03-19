@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnection from "@/config/db";
+import cloudinary from "cloudinary";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
-import { ISubCategory } from "@/migrations/Migration";
-import { RowDataPacket, OkPacket } from "mysql2";
-import { z } from "zod";
-import path from "path";
-import fs from "fs";
+import dbConnection from "@/config/db";
 import { authMiddleware } from "@/middlewares/authMiddleware";
+import { ISubCategory } from "@/migrations/Migration";
+import { z } from "zod";
+import { RowDataPacket, OkPacket } from "mysql2";
 
-const uploadDir = path.join(process.cwd(), "public/assets/mainAssets/main");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configure Cloudinary
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export const config = {
     api: {
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
         if (authResult.status !== 200) {
             return authResult;
         }
-        
+
         const formData = await req.formData();
         const category_id = formData.get("category_id") as string;
         const name = formData.get("name") as string;
@@ -68,28 +69,34 @@ export async function POST(req: NextRequest) {
             return NextResponse.json(responseStructure(false, "Sub-category already exists"), { status: 400 });
         }
 
-        let uploadedFileName = "";
+        let uploadedImageUrl = "";
         if (imageFile) {
-            const fileExtension = path.extname(imageFile.name);
-            const uniqueFileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${fileExtension}`;
-            const filePath = path.join(uploadDir, uniqueFileName);
             const buffer = Buffer.from(await imageFile.arrayBuffer());
-
-            fs.writeFileSync(filePath, buffer);
-            uploadedFileName = uniqueFileName;
+            const uploadResponse = await new Promise((resolve, reject) => {
+                cloudinary.v2.uploader.upload_stream(
+                    { folder: process.env.CLOUDINARY_SUB_CATEGORIES_FOLDER, public_id: `subcategory_${Date.now()}` },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                ).end(buffer);
+            });
+            const { secure_url } = uploadResponse as { secure_url: string };
+            const extractedPath = secure_url.replace(/^.*\/upload\//, "");
+            uploadedImageUrl = extractedPath;
         }
 
         // Insert into Database
         const result = await mysqlDb.execute(
             `INSERT INTO \`sub_categories\` (category_id, name, image, is_active) VALUES (?, ?, ?, 1)`,
-            [parseInt(category_id), name, uploadedFileName]
+            [parseInt(category_id), name, uploadedImageUrl]
         ) as OkPacket[];
 
         if (result[0].affectedRows === 0) {
             return NextResponse.json(responseStructure(false, "Something Went Wrong"), { status: 400 });
         }
 
-        return NextResponse.json(responseStructure(true, "Successfully Created Sub-category"), { status: 201 });
+        return NextResponse.json(responseStructure(true, "Successfully Created Sub-category", { imageUrl: uploadedImageUrl }), { status: 201 });
     } catch (error) {
         return NextResponse.json(responseStructure(false, handleCatchErrors(error)), { status: 500 });
     }

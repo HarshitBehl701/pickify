@@ -20,7 +20,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 
   const handleLogout = useCallback(async () => {
     try {
-      await axios.post("/admin/logout", {}, { withCredentials: true });
+      await axios.post("api/admin/logout", {}, { withCredentials: true });
       toast.success("Successfully Logged Out");
       setTimeout(() => window.location.reload(), 600);
     } catch (error) {

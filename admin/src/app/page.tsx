@@ -42,7 +42,7 @@ export default function LoginPage() {
       toast.success("Login successful!");
       setIsLoggedIn(true);
       setUserData(response.data.data.userData);
-      router.push("/admin/profile");
+      router.push("/admin");
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data?.message || "Login failed");
@@ -59,7 +59,7 @@ export default function LoginPage() {
       <div className="bg-white p-8 shadow-lg rounded-md w-96 border border-gray-200">
         <div className="header mb-4 flex flex-col items-center">
           <div className="relative w-32 h-24 rounded-md overflow-hidden">
-            <Image src={'/assets/mainAssets/logos/logo.png'} alt="product"  fill={true} objectFit="cover" />
+            <Image src={`${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_NAME}`} alt="product"  fill={true} objectFit="cover" />
           </div>
           <h2 className="text-2xl font-semibold text-center">Admin</h2>
         </div>

@@ -72,7 +72,7 @@ const Comments: React.FC<CommentsProps> = ({ product_id, order_id, isCommentAllo
                         <div key={comment.id} className="flex border gap-3  p-2  rounded-md   border-gray-300 cursor-pointer items-start mb-4">
                             
                             <Image
-                                src={comment.user_id.image ? `/assets/users/${comment.user_id.image}` : "/assets/mainAssets/logos/logo.png"}
+                                src={comment.user_id.image ? `${process.env.NEXT_PUBLIC_API_USERS_ASSETS_URL}/${comment.user_id.image}` : `${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_NAME}`}
                                 width={60}
                                 height={60}
                                 alt="user"

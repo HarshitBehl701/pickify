@@ -102,7 +102,7 @@ function Users() {
                 <td className="py-3 px-4">{indexOfFirstItem + index + 1}</td>
                 <td className="py-3 px-4">
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_USER_API_ASSETS_URL}/${user.image}`}
+                    src={`${process.env.NEXT_PUBLIC_API_USERS_ASSETS_URL}/${user.image}`}
                     width={80}
                     height={100}
                     unoptimized

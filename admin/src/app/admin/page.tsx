@@ -4,6 +4,7 @@ import { useUserContext } from "@/context/userContext";
 
 function Profile() {
   const {userData} =  useUserContext();
+  
   return (
     <div className="p-6 bg-white border border-gray-200 shadow-lg rounded-lg">
 
@@ -13,7 +14,7 @@ function Profile() {
         {/* Profile Picture */}
         <div className="relative w-32 h-24 rounded-md overflow-hidden">
           <Image
-            src={"/assets/mainAssets/logos/logo.png"}
+            src={`${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_NAME}`}
             alt="Admin Profile"
             fill={true}
             objectFit="cover"

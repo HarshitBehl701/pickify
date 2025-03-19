@@ -1,10 +1,9 @@
 import React from "react";
-import Link from "next/link";
 
 const HomeHeader = () => {
   return (
     <section className="relative w-full h-[400px] overlfow-hidden rounded-lg flex items-center justify-center text-center bg-cover bg-center" 
-      style={{ backgroundImage: "url('/assets/mainAssets/headers/header.jpg')" }}>
+      style={{ backgroundImage: `url('${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_HEADER_IMAGE}')` }}>
       
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/50 bg-opacity-50 rounded-lg"></div>
@@ -17,11 +16,9 @@ const HomeHeader = () => {
         <p className="mt-4 text-lg text-gray-200">
           Discover the best deals on top-quality products. Your one-stop destination for hassle-free shopping.
         </p>
-        <Link href="/shop">
-          <button className="mt-6 px-6 py-3 bg-pink-600 text-white font-semibold rounded-md hover:bg-pink-700 transition cursor-pointer">
+        <button className="mt-6 px-6 py-3 bg-pink-600 text-white font-semibold rounded-md hover:bg-pink-700 transition cursor-pointer">
             Start Shopping
           </button>
-        </Link>
       </div>
     </section>
   );

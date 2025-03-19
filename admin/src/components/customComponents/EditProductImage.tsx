@@ -70,7 +70,7 @@ function EditProductImage({
           onClick={handleImageClick}
         >
           <Image
-            src={previews || `/assets/productAssets/${img}`}
+            src={previews || `${process.env.NEXT_PUBLIC_API_PRODUCTS_ASSETS_URL}/${img}`}
             width={140}
             height={100}
             alt="Product Image"

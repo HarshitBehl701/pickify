@@ -7,6 +7,7 @@ import axios from "axios";
 import { usePageContext } from "@/context/pageContext";
 import Link from "next/link";
 import { useUserContext } from "@/context/userContext";
+import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
 
 function Orders() {
   const { products } = usePageContext();
@@ -54,7 +55,7 @@ function Orders() {
               className="bg-white shadow-md border border-gray-200 rounded-lg p-4 flex gap-4 items-center"
             >
               <Image
-                src={`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${
+                src={`${process.env.NEXT_PUBLIC_API_PRODUCTS_ASSETS_URL}/${
                   order.product_id?.images?.split(",")[0]
                 }`}
                 alt="Product"
@@ -104,11 +105,19 @@ function Orders() {
               )}
             </div>
           ))}
+        {(!userOrders || (Array.isArray(userOrders) && userOrders.length ===  0)) && <p className="italic">No  orders...</p>}
       </div>
 
       {/* Similar Products Section */}
       <h2 className="text-2xl font-semibold mt-12">Explore Other Products</h2>
       {products && <Products title="" productsData={products} />}
+      {!products && (
+        <div className="grid grid-cols-1 place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-8">
+          {Array.from({ length: 4 }).map(() => (
+            <ProductCardSkeleton key={Math.random()} />
+          ))}
+        </div>
+      )}
       <Toaster />
     </div>
   );

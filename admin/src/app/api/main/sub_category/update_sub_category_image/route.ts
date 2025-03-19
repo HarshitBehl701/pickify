@@ -1,83 +1,72 @@
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
+import cloudinary from "cloudinary";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
 import dbConnection from "@/config/db";
-import { ISubCategory } from "@/migrations/Migration";
 import { authMiddleware } from "@/middlewares/authMiddleware";
-import multer from "multer";
-import { RowDataPacket } from "mysql2";
+import { ISubCategory } from "@/migrations/Migration";
 
-// Ensure the upload directory exists
-const uploadDir = path.join(process.cwd(), "public/assets/mainAssets/main");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Multer Storage Configuration
-const storage = multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, uploadDir),
-    filename: (_req, file, cb) => {
-        const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-        cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
-    },
+// Configure Cloudinary
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const upload = multer({ storage });
-
-// Function to process formData
-async function processFile(req: NextRequest): Promise<{ id: number; filePath: string } | null> {
-    const formData = await req.formData();
-    const id = Number(formData.get("id"));
-    const file = formData.get("image") as File;
-
-    if (!id || !file) return null;
-
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const fileName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.name)}`;
-    const filePath = path.join(uploadDir, fileName);
-
-    fs.writeFileSync(filePath, buffer);
-    return { id, filePath: fileName };
-}
 
 export async function POST(req: NextRequest) {
     try {
+        // Authenticate user
         const authResult = await authMiddleware(req);
-        if (authResult.status !== 200) {
-            return authResult;
-        }
-        
-        const fileData = await processFile(req);
-        if (!fileData) {
-            return NextResponse.json(responseStructure(false, "Invalid form data"), { status: 400 });
+        if (authResult.status !== 200) return authResult;
+
+        const formData = await req.formData();
+        const id = formData.get("id");
+        const file = formData.get("image") as File;
+
+        if (!id || !file) {
+            return NextResponse.json(responseStructure(false, "Missing required fields"), { status: 400 });
         }
 
-        const { id, filePath } = fileData;
-        const mysqlDb = await dbConnection;
+        const mysqlConnection = await dbConnection;
+        const [subCategoryRows] = await mysqlConnection.execute("SELECT * FROM `sub_categories` WHERE id=?", [parseInt(id as string)]);
 
-        // Check if sub-category exists
-        const [categoryRows] = await mysqlDb.execute(`SELECT * FROM \`sub_categories\` WHERE id=?`, [id]) as RowDataPacket[];
-        if ((categoryRows as ISubCategory[]).length === 0) {
+        if ((subCategoryRows as ISubCategory[]).length === 0) {
             return NextResponse.json(responseStructure(false, "No sub-category found"), { status: 404 });
         }
 
-        const sub_category = (categoryRows as ISubCategory[])[0];
+        const subCategory = (subCategoryRows as ISubCategory[])[0];
 
-        // Delete old image if exists
-        if (sub_category.image) {
-            const oldImagePath = path.join(uploadDir, sub_category.image);
-            if (fs.existsSync(oldImagePath)) {
-                fs.unlinkSync(oldImagePath);
-            }
+        // Delete old image from Cloudinary if exists
+        if (subCategory.image) {
+            const publicId = (subCategory.image as string).replace(/^v\d+\//, "").replace(/\.[^.]+$/, "");
+            await cloudinary.v2.uploader.destroy(publicId);
         }
 
-        // Update the database with the new image
-        await mysqlDb.execute(`UPDATE \`sub_categories\` SET \`image\`=? WHERE id=?`, [filePath, id]);
+        // Upload new image to Cloudinary
+        const buffer = Buffer.from(await file.arrayBuffer());
+        const uploadResponse = await new Promise((resolve, reject) => {
+            cloudinary.v2.uploader.upload_stream(
+                { folder: process.env.CLOUDINARY_SUB_CATEGORIES_FOLDER, public_id: `sub_category_${Date.now()}` },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            ).end(buffer);
+        });
 
-        return NextResponse.json(responseStructure(true, "Successfully updated sub-category image"), { status: 200 });
+        const { secure_url } = uploadResponse as { secure_url: string };
+        const extractedPath = secure_url.replace(/^.*\/upload\//, "");
+
+        // Update sub-category image in database
+        await mysqlConnection.execute("UPDATE `sub_categories` SET `image`=? WHERE id=?", [extractedPath, parseInt(id as string)]);
+
+        return NextResponse.json(responseStructure(true, "Successfully updated sub-category"), { status: 200 });
     } catch (error) {
         return NextResponse.json(responseStructure(false, handleCatchErrors(error)), { status: 500 });
     }
 }
+
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};

@@ -9,6 +9,7 @@ import { usePageContext } from "@/context/pageContext";
 import { useUserContext } from "@/context/userContext";
 import Comments from "@/components/customComponents/mainComponents/Comments";
 import { Star } from "lucide-react";
+import ProductCardSkeleton from "@/components/skeletons/ProductCardSkeleton";
 
 function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: string }> }) {
   const [quantity, setQuantity] = useState(1);
@@ -280,9 +281,9 @@ function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: 
             <div className="border  w-full h-96 rounded-lg overflow-hidden">
               <Image
                 src={
-                  selectedImage == "/assets/mainAssets/logos/logo.png"
+                  selectedImage == `${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_NAME}`
                     ? selectedImage
-                    : `${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${selectedImage}`
+                    : `${process.env.NEXT_PUBLIC_API_PRODUCTS_ASSETS_URL}/${selectedImage}`
                 }
                 width={100}
                 height={384}
@@ -301,7 +302,7 @@ function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: 
                   .map((img, index) => (
                     <Image
                       key={index}
-                      src={`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${img}`}
+                      src={`${process.env.NEXT_PUBLIC_API_PRODUCTS_ASSETS_URL}/${img}`}
                       width={80}
                       height={80}
                       unoptimized
@@ -423,6 +424,14 @@ function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: 
         otherProducts.length > 0 && (
           <Products title="" productsData={otherProducts} />
         )}
+        {(!otherProducts ||
+        Array.isArray(otherProducts) &&
+        otherProducts.length == 0) && 
+        <div className="grid grid-cols-1 place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-8">
+          {(
+          Array.from({length:4}).map(() => <ProductCardSkeleton key={Math.random()} />)
+        )}
+        </div>}
       <Toaster />
     </div>
   );

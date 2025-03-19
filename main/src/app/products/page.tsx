@@ -1,5 +1,6 @@
 "use client"
 import Products from '@/components/customComponents/mainComponents/Products';
+import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 import { usePageContext } from '@/context/pageContext';
 import { IProduct } from '@/interfaces/modelInterface';
 import React, { useEffect, useState,use } from 'react';
@@ -60,13 +61,21 @@ function ProductSearch({ searchParams }: { searchParams: Promise<{ q?: string,ca
             ) : (
                 <p className="text-gray-500 mt-4">No products found.</p>
             )}
+            
+
+            <h2 className='text-2xl font-semibold mt-18 mb-6'>View Similar Products</h2>
 
             {filteredSimilarProducts && filteredSimilarProducts.length > 0 && (
                 <>
-                    <h2 className='text-2xl font-semibold mt-12'>View Similar Products</h2>
                     <Products title='' productsData={filteredSimilarProducts} />
                 </>
             )}
+            {
+                (!filteredSimilarProducts ||  (Array.isArray(filteredSimilarProducts) && filteredSimilarProducts.length == 0))  &&
+                <div className="grid grid-cols-1 place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-8">
+                {Array.from({length:4}).map(() => <ProductCardSkeleton  key={Math.random()} />)}
+                </div>
+            }
         </div>
     );
 }

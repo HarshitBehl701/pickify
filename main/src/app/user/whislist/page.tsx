@@ -1,5 +1,6 @@
 'use client';
 import Products from '@/components/customComponents/mainComponents/Products'
+import ProductCardSkeleton from '@/components/skeletons/ProductCardSkeleton';
 import { usePageContext } from '@/context/pageContext';
 import { useUserContext } from '@/context/userContext'
 import { IProduct } from '@/interfaces/modelInterface';
@@ -23,6 +24,9 @@ function Whislist() {
         <br /><br />
         {products   &&  <h2  className='text-2xl font-semibold'>Explore  Products</h2>}
         {products  &&  <Products  title='' productsData={products} />}
+        {!products &&  <div className="grid grid-cols-1 place-items-center sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 md:px-8">
+        {Array.from({length:4}).map(() => <ProductCardSkeleton key={Math.random()} />)}  
+        </div>}
     </div>
   )
 }

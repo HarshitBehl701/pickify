@@ -19,18 +19,18 @@ const ProductCard = ({ data }: { data: IProduct }) => {
             {Array.isArray(images) && images.length  > 0 && images.map((img, index) => {
               return   (<SwiperSlide key={index}>
                 <Image
-                  src={`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${img}`}
+                  src={`${process.env.NEXT_PUBLIC_API_PRODUCTS_ASSETS_URL}/${img}`}
                   alt={`product-${index}`}
-                  fill={true}
+                  fill={true} 
                   unoptimized
-                  className="rounded-md object-cover"
+                  className="rounded-md object-contain"
                   sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
               </SwiperSlide>)
             })}
             {(!images || (Array.isArray(images) &&  images.length  ===  0)) &&
             <Image
-              src={`/assets/mainAssets/logos/logo.png`}
+              src={`${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_NAME}`}
               alt={`product`}
               fill={true}
               className="rounded-md object-cover"

@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
         port:process.env.NEXT_PUBLIC_IMAGE_ALLOWED_PORT ||  '3001'
       },
     ],
+    domains: [process.env.NEXT_PUBLIC_IMAGE_ALLOWED_HOSTNAME  ||'localhost']
   }
 };
 

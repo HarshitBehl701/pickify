@@ -25,7 +25,7 @@ const AddCategory = () => {
   );
 
   const [previews, setPreviews] = useState<string>(
-    "/assets/mainAssets/logos/logo.png"
+    `${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${process.env.NEXT_PUBLIC_LOGO_NAME}`
   );
 
   const fileInputRefs = useRef<HTMLInputElement | null>(null);

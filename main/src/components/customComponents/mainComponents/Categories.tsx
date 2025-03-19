@@ -1,3 +1,4 @@
+import CategoriesSkeleton from "@/components/skeletons/CategoriesSkeleton";
 import { usePageContext } from "@/context/pageContext";
 import Image from "next/image";
 import React from "react";
@@ -14,7 +15,7 @@ const Categories = () => {
             className="group relative h-28  overflow-hidden rounded-lg shadow-lg cursor-pointer hover:shadow-xl transition-all duration-300 border border-gray-200 flex items-center justify-center"
           >
             <Image
-              src={`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/mainAssets/${data.image}`}
+              src={`${process.env.NEXT_PUBLIC_API_MAIN_ASSETS_URL}/${data.image}`}
               alt={data.name}
               className="object-cover block my-auto mx-auto transition-transform duration-300 group-hover:scale-110"
               width={180}
@@ -27,6 +28,7 @@ const Categories = () => {
           </div>
         ))}
       </div>
+        {(!category_subCategory ||  (Array.isArray(category_subCategory) &&  category_subCategory.length  ===  0)) &&  <CategoriesSkeleton />}
     </div>
   );
 };

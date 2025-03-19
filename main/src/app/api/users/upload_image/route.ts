@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
+import cloudinary from "cloudinary";
 import { authMiddleware } from "@/middlewares/authMiddleware";
 import dbConnection from "@/config/db";
 import { handleCatchErrors, responseStructure } from "@/utils/commonUtils";
 
-// Define the directory where files will be stored
-const uploadDir = path.join(process.cwd(), "public/assets/users");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+// Configure Cloudinary
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,27 +30,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(responseStructure(false, "No file uploaded"), { status: 400 });
     }
 
-    // Generate a unique filename
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    const fileExt = path.extname(file.name);
-    const fileName = `${uniqueSuffix}${fileExt}`;
-    const filePath = path.join(uploadDir, fileName);
+    // Convert file to Buffer
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    // Convert file to Buffer and save
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
-    fs.writeFileSync(filePath, fileBuffer);
+    // Upload file to Cloudinary
+    const uploadResponse = await new Promise((resolve, reject) => {
+      cloudinary.v2.uploader.upload_stream(
+        { folder: process.env.CLOUDINARY_USER_FOLDER, public_id: `user_${user.id}_${Date.now()}` },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(buffer);
+    });
 
-    // Delete old image if exists
+    // Extract Cloudinary URL and Public ID
+    const { secure_url } = uploadResponse as { secure_url: string; public_id: string };
+
+    const extractedPath = secure_url.replace(/^.*\/upload\//, "");
+
+    // Delete old image if exists (from Cloudinary)
     if (user.image) {
-      const oldImagePath = path.join(uploadDir, user.image);
-      if (fs.existsSync(oldImagePath)) {
-        fs.unlinkSync(oldImagePath);
+      try {
+        const publicId = user.image.replace(/^v\d+\//, "").replace(/\.[^.]+$/, "");
+    
+        await cloudinary.v2.uploader.destroy(publicId);
+      } catch (error) {
+        console.error("Failed to delete old Cloudinary image:", error);
       }
     }
 
-    // Update database with new image
+    // Update database with Cloudinary image URL & Public ID
     const mysqlConnection = await dbConnection;
-    await mysqlConnection.execute(`UPDATE users SET image=? WHERE id=?`, [fileName, user.id]);
+    await mysqlConnection.execute(`UPDATE users SET image=? WHERE id=?`, [
+      extractedPath,
+      user.id,
+    ]);
 
     return NextResponse.json(responseStructure(true, "Successfully updated profile photo"), { status: 200 });
   } catch (error) {

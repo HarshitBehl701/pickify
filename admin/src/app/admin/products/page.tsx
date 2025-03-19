@@ -111,7 +111,7 @@ function Products() {
                 <td className="py-3 px-4">{indexOfFirstItem + index + 1}</td>
                 <td className="py-3 px-4">
                   <Image
-                    src={`/assets/productAssets/${obj.images?.split(",")[0]}`}
+                    src={`${process.env.NEXT_PUBLIC_API_PRODUCTS_ASSETS_URL}/${obj.images?.split(",")[0]}`}
                     width={80}
                     height={100}
                     alt="Product Image"
