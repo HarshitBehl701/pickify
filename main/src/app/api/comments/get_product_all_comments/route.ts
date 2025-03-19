@@ -81,7 +81,6 @@ export async function POST(req: NextRequest) {
 
         return NextResponse.json(responseStructure(true, "Comments fetched successfully", { requiredData }), { status: 200 });
     } catch (error) {
-        console.log(error);
         return NextResponse.json(responseStructure(false, handleCatchErrors(error)), { status: 500 });
     }
 }

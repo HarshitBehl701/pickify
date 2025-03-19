@@ -10,7 +10,6 @@ function Whislist() {
   const {products} = usePageContext();
   const  [whislistProducts,setWhislistProducts] = useState<IProduct[] |  null>(null);
   
-  console.log(userWhislist);
 
   useEffect(() => {
     if(userWhislist)

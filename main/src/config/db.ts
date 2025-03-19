@@ -13,7 +13,7 @@ async function initializeDatabase() {
     });
 
 
-    console.log("Database connection successful!");
+    ("Database connection successful!");
     return connection;
   } catch (error) {
     console.error("Database initialization error:", error);
