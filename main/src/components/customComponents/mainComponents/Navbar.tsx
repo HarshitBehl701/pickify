@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { usePageContext } from "@/context/pageContext";
 import { Menu, ShoppingCart, Heart, User, Home } from "lucide-react";
 import Image from "next/image";
@@ -16,17 +16,17 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState<string>("/");
   const { category_subCategory } = usePageContext();
-  const { isLoggedIn, userData } = useUserContext();
-  const pathName  = usePathname();
+  const { isLoggedIn, userData, userCart, userOrders } = useUserContext();
+  const pathName = usePathname();
   useEffect(() => {
     setCurrentPage(pathName);
   }, [pathName]);
 
-  const  handleLogout  =  useCallback(async () => {
+  const handleLogout = useCallback(async () => {
     try {
-      await axios.post("/api/users/logout",{},{withCredentials:true});
+      await axios.post("/api/users/logout", {}, { withCredentials: true });
       toast.success("Successfully Logout");
-      setTimeout(() =>  window.location.reload(),500);
+      setTimeout(() => window.location.reload(), 500);
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         toast.error(error.response.data?.message || "Request failed");
@@ -34,7 +34,7 @@ export default function Navbar() {
         toast.error("An unexpected error occurred");
       }
     }
-  },[]);  
+  }, []);
 
   return (
     <nav className="bg-gray-900 text-white sticky top-0 z-50 w-full shadow-lg">
@@ -80,12 +80,22 @@ export default function Navbar() {
             </Link>
             <Link
               href="/user/cart"
-              className="flex flex-col  items-center justify-center"
+              className="relative flex flex-col items-center justify-center"
             >
+              {/* Cart Icon */}
               <ShoppingCart
                 className="hover:text-[#FF4F79] cursor-pointer"
                 size={24}
               />
+
+              {/* Badge for Cart Count */}
+              {userCart && Array.isArray(userCart) && userCart.length > 0 && (
+                <span className="absolute -top-1 -right-2 bg-[#FF4F79] text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {userCart.length}
+                </span>
+              )}
+
+              {/* Cart Label */}
               <p className="text-xs font-semibold">Cart</p>
             </Link>
             <div className="relative">
@@ -104,9 +114,7 @@ export default function Navbar() {
                   <ul>
                     {isLoggedIn && (
                       <>
-                      <li className="text-[#FF4F79]">
-                        {userData?.name}
-                      </li>
+                        <li className="text-[#FF4F79]">{userData?.name}</li>
                         <li>
                           <Link
                             href="/user/profile"
@@ -118,13 +126,20 @@ export default function Navbar() {
                         <li>
                           <Link
                             href="/user/orders"
-                            className="block p-2 cursor-pointer hover:text-[#FF4F79]"
+                            className="p-2 cursor-pointer hover:text-[#FF4F79] flex items-center gap-1"
                           >
                             Orders
+                            {userOrders   && Array.isArray(userOrders) &&  userOrders.length  >  0 &&  <span className="bg-[#FF4F79] text-white text-xs font-bold px-2 py-1 rounded-md">
+                              {userOrders.length}
+                            </span>}
                           </Link>
                         </li>
+
                         <li>
-                          <button className="block p-2 text-left w-full cursor-pointer text-red-500"  onClick={handleLogout}>
+                          <button
+                            className="block p-2 text-left w-full cursor-pointer text-red-500"
+                            onClick={handleLogout}
+                          >
                             Logout
                           </button>
                         </li>
