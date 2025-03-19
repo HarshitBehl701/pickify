@@ -33,7 +33,7 @@ export default function Login() {
     try {
       const response = await axios.post("/api/users/login", formData);
       toast.success("Login Successful");
-      setUserData(response.data.data);
+      setUserData(response.data.data.userData);
       setIsLoggedIn(true);
 
       if (typeof window !== "undefined") {
