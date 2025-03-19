@@ -18,6 +18,7 @@ const Categories = () => {
               alt={data.name}
               className="object-cover block my-auto mx-auto transition-transform duration-300 group-hover:scale-110"
               width={180}
+              unoptimized
               height={120}
             />
             <div className="absolute inset-0 bg-black/85 bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
