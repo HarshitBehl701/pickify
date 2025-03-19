@@ -23,6 +23,7 @@ const ProductCard = ({ data }: { data: IProduct }) => {
                   src={`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${img}`}
                   alt={`product-${index}`}
                   fill={true}
+                  unoptimized
                   className="rounded-md object-cover"
                   sizes="(max-width: 600px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
