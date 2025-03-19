@@ -11,8 +11,6 @@ function ProductSearch({ searchParams }: { searchParams: Promise<{ q?: string,ca
     
     const {q,category,sub_category} = use(searchParams);
 
-    console.log(q,category,sub_category)
-
     useEffect(() => {
         if (!products || products.length === 0) return;
 
