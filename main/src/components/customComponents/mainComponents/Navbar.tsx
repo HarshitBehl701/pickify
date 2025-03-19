@@ -129,8 +129,8 @@ export default function Navbar() {
                             className="p-2 cursor-pointer hover:text-[#FF4F79] flex items-center gap-1"
                           >
                             Orders
-                            {userOrders   && Array.isArray(userOrders) &&  (userOrders.map((order) => order.status  === 'Pending')).length  >  0 &&  <span className="bg-[#FF4F79] text-white text-xs font-bold px-2 py-1 rounded-md">
-                              {(userOrders.map((order) => order.status  === 'Pending')).length}
+                            {userOrders   && Array.isArray(userOrders) &&  (userOrders.filter((order) => order.status  === 'Pending')).length  >  0 &&  <span className="bg-[#FF4F79] text-white text-xs font-bold px-2 py-1 rounded-md">
+                              {(userOrders.filter((order) => order.status  === 'Pending')).length}
                             </span>}
                           </Link>
                         </li>
