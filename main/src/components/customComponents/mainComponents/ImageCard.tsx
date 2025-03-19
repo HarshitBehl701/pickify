@@ -11,6 +11,7 @@ function ImageCard({image,text,link}:{image:string,text:string,link:string}) {
           src={image}
           alt="product"
           height={288}
+          unoptimized
           width={120}
           className="transition w-auto shrink-0 object-cover h-full object-center duration-300 ease-in-out group-hover:opacity-50"
         />
