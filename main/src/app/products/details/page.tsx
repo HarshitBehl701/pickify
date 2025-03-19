@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { IProduct } from "@/interfaces/modelInterface";
 import { toast, Toaster } from "sonner";
@@ -22,14 +22,7 @@ function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: 
   const [selectedImage, setSelectedImage] = useState<string>(
     "/assets/mainAssets/logos/logo.png"
   );
-  const [product_id,setProductId] =  useState<string | null>(null)
-
-  useEffect(() =>{
-    ;(async() =>{
-      const search = await  searchParams;
-      setProductId(search?.product_id as  string)
-    })()
-  },[searchParams])
+  const {product_id} =  use(searchParams);
 
   useEffect(() => {
     if (productData && "id" in productData) {
