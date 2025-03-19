@@ -83,6 +83,7 @@ function UserDetail({ searchParams }: { searchParams: Promise<{ user_id?: string
                 src={preview || (userData && userData.image ? `${process.env.NEXT_PUBLIC_USER_API_ASSETS_URL}/${userData.image}` : "/assets/mainAssets/logos/logo.png")}
                 width={140}
                 height={100}
+                unoptimized
                 alt="User Profile"
                 className="transition-opacity duration-200"
               />

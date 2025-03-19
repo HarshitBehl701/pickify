@@ -60,6 +60,7 @@ function Orders() {
                 alt="Product"
                 height={96}
                 width={96}
+                unoptimized
                 className="w-24 h-24 object-cover rounded-md"
               />
               <div className="flex-1">

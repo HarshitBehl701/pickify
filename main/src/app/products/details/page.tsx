@@ -286,6 +286,7 @@ function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: 
                 }
                 width={100}
                 height={384}
+                unoptimized
                 alt={productData.name}
                 className="object-contain w-full  h-full"
               />
@@ -303,6 +304,7 @@ function ProductDetail({ searchParams }: { searchParams: Promise<{ product_id?: 
                       src={`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${img}`}
                       width={80}
                       height={80}
+                      unoptimized
                       alt="Thumbnail"
                       className={`cursor-pointer object-contain border rounded-md ${
                         img === selectedImage

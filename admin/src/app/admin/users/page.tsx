@@ -105,6 +105,7 @@ function Users() {
                     src={`${process.env.NEXT_PUBLIC_USER_API_ASSETS_URL}/${user.image}`}
                     width={80}
                     height={100}
+                    unoptimized
                     alt="User Image"
                     className="transition-opacity rounded-md duration-200"
                   />
