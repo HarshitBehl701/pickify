@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
             }
 
             const [cartItem] = await mysqlDb.execute(
-                `SELECT id FROM user_cart WHERE user_id = ? AND product_id = ?`,
+                `SELECT id FROM user_cart WHERE user_id = ? AND product_id = ? AND is_active=1`,
                 [user.id, product_id]
             );
 
