@@ -18,7 +18,6 @@ const ProductCard = ({ data }: { data: IProduct }) => {
         <div className="relative w-full h-48 rounded-md overflow-hidden">
           <Swiper spaceBetween={10} autoplay={{ delay: 1000, disableOnInteraction: false }} slidesPerView={1}  className="w-full  h-full" pagination={{ clickable: true }}>
             {Array.isArray(images) && images.length  > 0 && images.map((img, index) => {
-              console.log(`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${img}`)
               return   (<SwiperSlide key={index}>
                 <Image
                   src={`${process.env.NEXT_PUBLIC_API_ASSETS_URL}/products/${img}`}
