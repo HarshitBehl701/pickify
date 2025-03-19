@@ -10,8 +10,7 @@ import "swiper/css/pagination";
 
 const ProductCard = ({ data }: { data: IProduct }) => {
   const images = data?.images  ? data?.images?.split(",") : [];
-
-  
+  console.log(images);
   return (
     <CustomCard>
       <Link href={`/products/details?product=${data?.name}&product_id=${data?.id}`} className="block">
