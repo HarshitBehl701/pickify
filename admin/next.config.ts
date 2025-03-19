@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
         {
           protocol:process.env.NEXT_PUBLIC_IMAGE_ALLOWED_PROTOCOL as 'http' | 'https'  ||  "http",
           hostname:process.env.NEXT_PUBLIC_IMAGE_ALLOWED_HOSTNAME  ||  "localhost",
-          port:process.env.NEXT_PUBLIC_IMAGE_ALLOWED_PORT  || "3000"
+          port:process.env.NEXT_PUBLIC_IMAGE_ALLOWED_PORT  || "3000",
+          pathname: '/api/files/**'
         },
       ],
     }
