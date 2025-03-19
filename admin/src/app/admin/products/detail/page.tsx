@@ -4,7 +4,7 @@ import EditProductCategorySubCategory from "@/components/customComponents/EditPr
 import EditProductImage from "@/components/customComponents/EditProductImage";
 import { IComment, IProduct } from "@/migrations/Migration";
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 interface ICustomProductResponse extends IProduct {
@@ -13,13 +13,7 @@ interface ICustomProductResponse extends IProduct {
 
 const ProductDetails = ({ searchParams }: { searchParams: Promise<{ product_id?: string }> }) => {
   const [product, setProduct] = useState<ICustomProductResponse | null>(null);
-  const [product_id,setProductId] = useState<string | null>(null);
-
-  useEffect(() => {
-    ;(async() =>{
-      setProductId((await searchParams)?.product_id  as  string)
-    })()
-  },[searchParams])
+  const {product_id} = use(searchParams);
 
   useEffect(() => {
     if (product_id && product == null) {

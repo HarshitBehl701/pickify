@@ -1,7 +1,7 @@
 "use client"
 import { IOrder } from "@/migrations/Migration";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { use, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type IOrderStatus = "Pending"| "Processing"| "Shipped"| "Delivered"| "Cancelled"| "Refunded"| "Failed"| "On Hold"| "Returned";
@@ -21,13 +21,7 @@ const  orderStatuses:Record<IOrderStatus,IOrderStatus> = {
 
 const OrderDetails = ({ searchParams }: { searchParams: Promise<{ order_id?: string }> }) => {
   const [formattedDate, setFormattedDate] = useState("");
-  const  [order_id,setOrderId]  = useState<string  |null>(null);
-  useEffect(() => {
-    ;(async()  => {
-      const  search = await searchParams;
-      setOrderId(search?.order_id  as   string);
-    })()
-  },[searchParams])
+  const  {order_id}  = use(searchParams);
 
   const [orderData,setOrderData] = useState<IOrder  | null>(null);
   useEffect(() => {
