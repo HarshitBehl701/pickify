@@ -13,9 +13,9 @@ export async function GET(
     const { type, filename } = await context.params;
 
     const storageDirectory: Record<string, string> = {
-      mainAssets: 'storage/mainAssets/main',
-      userAssets: 'storage/userAssets',
-      products: 'storage/productAssets',
+      mainAssets: 'public/assets/mainAssets/main',
+      userAssets: 'public/assets/userAssets',
+      products: 'public/assets/productAssets',
     };
 
     if (!type || !filename || !(type in storageDirectory)) {
